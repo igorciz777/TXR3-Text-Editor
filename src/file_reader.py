@@ -2,6 +2,17 @@
 
 import os
 import struct
+from PyQt6.QtGui import QTextCursor
+
+
+def check_max_length(text_edit, max_length):
+    text = text_edit.toPlainText()
+
+    if len(text) > max_length:
+        text_edit.blockSignals(True)
+        text_edit.setText(text[:max_length])
+        text_edit.blockSignals(False)
+        text_edit.moveCursor(QTextCursor.MoveOperation.End)
 
 
 # defined structs
@@ -336,7 +347,7 @@ class Dat26899:
         for bad in bad_names:
             self.file.seek(0x2, os.SEEK_CUR)
             self.file.write_n_bytes(bad['name'], 0x12)
-    
+
 
 # class for reading data from 26900.dat (team profiles, rival profiles)
 # 26900/0000 - team profiles
@@ -411,4 +422,3 @@ class Dat26900:
             self.file.write_n_bytes(team['line7'], 0x33)
             self.file.write_n_bytes(team['line8'], 0x33)
             self.file.write_n_bytes(team['line9'], 0x33)
-

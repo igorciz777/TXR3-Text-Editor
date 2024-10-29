@@ -8,7 +8,7 @@ import scrolling_tab
 import file_reader
 
 from PyQt6 import QtGui, QtCore
-from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QTabWidget
+from PyQt6.QtWidgets import QMainWindow, QApplication, QLabel, QPushButton, QLineEdit, QTabWidget, QMessageBox
 from PyQt6.QtWidgets import QStyle, QVBoxLayout, QDialog, QFileDialog, QWidget, QHBoxLayout
 
 var_teams_tab = None
@@ -26,9 +26,10 @@ class StartupDialog(QDialog):
         self.setWindowIcon(icon)
         self.setGeometry(100, 100, 600, 200)
 
-        self.title_label = QLabel("Open TXR3 Text Data Files")
+        self.title_label = QLabel("TXR3 Text Editor")
         self.title_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.title_label.setStyleSheet("font-size: 20px; font-weight: bold;")
+        self.title_label.setStyleSheet("font-size: 24px; font-weight: bold;"
+                                       "color:  #2e2e2e;background-color: #bababa;")
         self.subtitle_label = QLabel("Select 26899.dat and 26900.dat files.\n"
                                      "You can extract them with GUT Archive Tools")
         self.subtitle_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
@@ -62,6 +63,10 @@ class StartupDialog(QDialog):
         self.layout().addLayout(self.dat1_layout)
         self.layout().addLayout(self.dat2_layout)
         self.layout().addWidget(self.accept_button)
+
+        made_by = QLabel("Made by: igorciz777")
+        made_by.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.layout().addWidget(made_by)
 
     def open_file_dialog(self, dat_field):
         file_name, _ = QFileDialog.getOpenFileName(self, 'Open .dat file', '', 'DAT Files (*.dat)')
@@ -122,10 +127,14 @@ class MainWindow(QMainWindow):
 
         git_wiki_action = help_menu.addAction("How to use")
         git_wiki_action.triggered.connect(lambda: QtGui.QDesktopServices.openUrl(
-            QtCore.QUrl("https://github.com/igorciz777")))  # todo
+            QtCore.QUrl("https://github.com/igorciz777/TXR3-Text-Editor/wiki")))
 
         about_action = help_menu.addAction("About")
-        # todo about dialog
+        about_action.triggered.connect(lambda: QMessageBox.about(self, "About",
+                                                                 "TXR3 Text Editor\n"
+                                                                 "Made by: igorciz777\n"
+                                                                 "Version: 1.0\n"
+                                                                 "GitHub: github.com/igorciz777/TXR3-Text-Editor"))
 
         exit_action = file_menu.addAction("Exit")
         exit_action.triggered.connect(self.close)

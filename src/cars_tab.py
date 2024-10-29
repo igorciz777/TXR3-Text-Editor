@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QHBoxLayout, QTreeWidget, QVBoxLayout, QScrollArea, QTreeWidgetItem
 from PyQt6.QtWidgets import QLineEdit, QPushButton, QLabel, QTextEdit
+from PyQt6.QtWidgets import QWidget, QHBoxLayout, QTreeWidget, QVBoxLayout, QScrollArea, QTreeWidgetItem
 
 import file_reader
 
@@ -114,6 +114,9 @@ class CarsTab(QWidget):
         edit_hbox.addWidget(QLabel("Description"))
         right_vbox.addLayout(edit_hbox)
         right_vbox.addWidget(flavor_text_edit)
+
+        dsc_max_length = 0x709 - 1
+        flavor_text_edit.textChanged.connect(lambda: file_reader.check_max_length(flavor_text_edit, dsc_max_length))
 
         button_hbox = QHBoxLayout()
         save_button = QPushButton("Save")
