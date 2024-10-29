@@ -108,8 +108,6 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(icon)
         self.setGeometry(100, 100, 800, 600)
 
-        self.setLayout(QVBoxLayout())
-
         self.startup_dialog = StartupDialog(icon)
         self.startup_dialog.exec()
         if self.startup_dialog.result() == QDialog.DialogCode.Accepted:
