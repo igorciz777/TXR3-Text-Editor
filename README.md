@@ -5,9 +5,6 @@ Text editor for Tokyo Xtreme Racer 3
 
 ## Running
 
-You can download the latest release [here](https://github.com/igorciz777/TXR3-Text-Editor/releases/latest)
-
-Or you can run it from source:
 1. Install Python 3.8 or higher
 2. Install PyQt6 ```pip install PyQt6```
 3. Run ```python src/main.py```
