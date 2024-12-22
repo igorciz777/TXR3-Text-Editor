@@ -100,8 +100,10 @@ def scrolling_text(file, size):
 
 def bad_text(file):
     bad = {
-        'val': file.read_uint16(),
-        'name': file.read(0x12)
+        'spacing': file.read_uint16(),
+        'value': file.read_uint16(),
+        'name0': file.read(0x12),
+        'name1': file.read(0x12)
     }
     return bad
 
@@ -258,7 +260,7 @@ class Dat26899:
             return None
         self.file.seek(self.dat.entries[9 + index])
         bad_names = []
-        for i in range(180):
+        for i in range(90):
             bad_name = bad_text(self.file)
             bad_names.append(bad_name)
         return bad_names
@@ -345,8 +347,9 @@ class Dat26899:
             return
         self.file.seek(self.dat.entries[9 + index])
         for bad in bad_names:
-            self.file.seek(0x2, os.SEEK_CUR)
-            self.file.write_n_bytes(bad['name'], 0x12)
+            self.file.seek(0x4, os.SEEK_CUR)
+            self.file.write_n_bytes(bad['name0'], 0x12)
+            self.file.write_n_bytes(bad['name1'], 0x12)
 
 
 # class for reading data from 26900.dat (team profiles, rival profiles)

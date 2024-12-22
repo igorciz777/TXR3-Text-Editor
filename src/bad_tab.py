@@ -35,11 +35,11 @@ class BadTab(QWidget):
         self.bad_tree_view.addTopLevelItem(QTreeWidgetItem(["B.A.D. Names 2"]))
 
         for bad in self.bad_1:
-            bad_item = QTreeWidgetItem([bad['name'].decode('utf-8', errors='ignore').strip('\x00')])
+            bad_item = QTreeWidgetItem([bad['name0'].decode('utf-8', errors='ignore').strip('\x00')])
             self.bad_tree_view.topLevelItem(0).addChild(bad_item)
 
         for bad in self.bad_2:
-            bad_item = QTreeWidgetItem([bad['name'].decode('utf-8', errors='ignore').strip('\x00')])
+            bad_item = QTreeWidgetItem([bad['name0'].decode('utf-8', errors='ignore').strip('\x00')])
             self.bad_tree_view.topLevelItem(1).addChild(bad_item)
 
         self.bad_tree_view.selectionModel().selectionChanged.connect(self.bad_selected)
@@ -48,9 +48,11 @@ class BadTab(QWidget):
 
         value_text_edit = QLineEdit()
         value_text_edit.setEnabled(False)
-        bad_name_text_edit = QLineEdit()
-        bad_name_text_edit.setMaxLength(0x12 - 1)
-        self.bad_lines = [value_text_edit, bad_name_text_edit]
+        bad_name0_text_edit = QLineEdit()
+        bad_name0_text_edit.setMaxLength(0x12 - 1)
+        bad_name1_text_edit = QLineEdit()
+        bad_name1_text_edit.setMaxLength(0x12 - 1)
+        self.bad_lines = [value_text_edit, bad_name0_text_edit, bad_name1_text_edit]
 
         edit_hbox = QHBoxLayout()
         edit_hbox.addWidget(QLabel("Value:"))
@@ -58,8 +60,10 @@ class BadTab(QWidget):
         right_vbox.addLayout(edit_hbox)
 
         edit_hbox = QHBoxLayout()
-        edit_hbox.addWidget(QLabel("B.A.D. Name:"))
-        edit_hbox.addWidget(bad_name_text_edit)
+        edit_hbox.addWidget(QLabel("B.A.D. Name 1:"))
+        edit_hbox.addWidget(bad_name0_text_edit)
+        edit_hbox.addWidget(QLabel("B.A.D. Name 2:"))
+        edit_hbox.addWidget(bad_name1_text_edit)
         right_vbox.addLayout(edit_hbox)
 
         button_hbox = QHBoxLayout()
@@ -89,8 +93,9 @@ class BadTab(QWidget):
             bad = self.bad_1[self.bad_idx]
         elif self.bad_file == 1:
             bad = self.bad_2[self.bad_idx]
-        self.bad_lines[0].setText(str(bad['val']))
-        self.bad_lines[1].setText(bad['name'].decode('utf-8', errors='ignore').strip('\x00'))
+        self.bad_lines[0].setText(str(bad['value']))
+        self.bad_lines[1].setText(bad['name0'].decode('utf-8', errors='ignore').strip('\x00'))
+        self.bad_lines[2].setText(bad['name1'].decode('utf-8', errors='ignore').strip('\x00'))
 
     def save(self):
         bad = None
@@ -98,7 +103,8 @@ class BadTab(QWidget):
             bad = self.bad_1[self.bad_idx]
         elif self.bad_file == 1:
             bad = self.bad_2[self.bad_idx]
-        bad['name'] = self.bad_lines[1].text().encode('utf-8') + b'\x00'
+        bad['name0'] = self.bad_lines[1].text().encode('utf-8') + b'\x00'
+        bad['name1'] = self.bad_lines[2].text().encode('utf-8') + b'\x00'
 
         if self.bad_file == 0:
             self.dat26899.save_bad_names(self.bad_file, self.bad_1)
