@@ -124,6 +124,9 @@ class FileReader:
         data = data.ljust(n, b'\x00')
         self.file.write(struct.pack('<' + 'B' * n, *data))
 
+    def write_uint16(self, data):
+        self.file.write(struct.pack('<H', data))
+
     def read_int8(self):
         return struct.unpack('<b', self.file.read(1))[0]
 
@@ -306,7 +309,8 @@ class Dat26899:
             self.file.seek(self.dat.entries[13])
 
         for rival in rivals:
-            self.file.seek(0x2 * 3, os.SEEK_CUR)
+            self.file.write_uint16(rival['team_id'])
+            self.file.seek(0x2 * 2, os.SEEK_CUR)
             self.file.write_n_bytes(rival['nickname_1'], 0x12)
             self.file.write_n_bytes(rival['nickname_2'], 0x10)
             self.file.seek(0xac, os.SEEK_CUR)
@@ -425,3 +429,95 @@ class Dat26900:
             self.file.write_n_bytes(team['line7'], 0x33)
             self.file.write_n_bytes(team['line8'], 0x33)
             self.file.write_n_bytes(team['line9'], 0x33)
+
+
+# class for reading data from 26679.bin (car names, duplicate of 26899/0011)
+class Bin26679:
+    def __init__(self, filename):
+        self.file = FileReader(filename)
+
+    def get_car_models(self):
+        self.file.seek(0)
+        car_models = []
+        for i in range(119):
+            car_model = car_text_struct(self.file)
+            car_models.append(car_model)
+        return car_models
+
+    def save_car_models(self, car_models):
+        self.file.seek(0)
+        for car in car_models:
+            self.file.write_n_bytes(car['brand'], 0x14)
+            self.file.write_n_bytes(car['model'], 0x20)
+            self.file.write_n_bytes(car['chassis'], 0x0c)
+            self.file.write_n_bytes(car['spec'], 0x28)
+            self.file.seek(0x4 * 6, os.SEEK_CUR)
+
+
+# class for reading data from 26680.bin (tokyo rivals, duplicate of 269899/0012)
+class Bin26680:
+    def __init__(self, filename):
+        self.file = FileReader(filename)
+
+    def get_tokyo_rivals(self):
+        self.file.seek(0)
+        tokyo_rivals = []
+        for i in range(310):
+            tokyo_rival = rival_struct(self.file)
+            tokyo_rivals.append(tokyo_rival)
+        return tokyo_rivals
+
+    def save_tokyo_rivals(self, rivals: rival_struct):
+        self.file.seek(0)
+        for rival in rivals:
+            self.file.write_uint16(rival['team_id'])
+            self.file.seek(0x2 * 2, os.SEEK_CUR)
+            self.file.write_n_bytes(rival['nickname_1'], 0x12)
+            self.file.write_n_bytes(rival['nickname_2'], 0x10)
+            self.file.seek(0xac, os.SEEK_CUR)
+
+
+# class for reading data from 26681.bin (osaka rivals, duplicate of 269899/0014)
+class Bin26681:
+    def __init__(self, filename):
+        self.file = FileReader(filename)
+
+    def get_osaka_rivals(self):
+        self.file.seek(0)
+        osaka_rivals = []
+        for i in range(160):
+            osaka_rival = rival_struct(self.file)
+            osaka_rivals.append(osaka_rival)
+        return osaka_rivals
+
+    def save_osaka_rivals(self, rivals: rival_struct):
+        self.file.seek(0)
+        for rival in rivals:
+            self.file.write_uint16(rival['team_id'])
+            self.file.seek(0x2 * 2, os.SEEK_CUR)
+            self.file.write_n_bytes(rival['nickname_1'], 0x12)
+            self.file.write_n_bytes(rival['nickname_2'], 0x10)
+            self.file.seek(0xac, os.SEEK_CUR)
+
+
+# class for reading data from 26682.bin (nagoya rivals, duplicate of 269899/0013)
+class Bin26682:
+    def __init__(self, filename):
+        self.file = FileReader(filename)
+
+    def get_nagoya_rivals(self):
+        self.file.seek(0)
+        nagoya_rivals = []
+        for i in range(130):
+            nagoya_rival = rival_struct(self.file)
+            nagoya_rivals.append(nagoya_rival)
+        return nagoya_rivals
+
+    def save_nagoya_rivals(self, rivals: rival_struct):
+        self.file.seek(0)
+        for rival in rivals:
+            self.file.write_uint16(rival['team_id'])
+            self.file.seek(0x2 * 2, os.SEEK_CUR)
+            self.file.write_n_bytes(rival['nickname_1'], 0x12)
+            self.file.write_n_bytes(rival['nickname_2'], 0x10)
+            self.file.seek(0xac, os.SEEK_CUR)

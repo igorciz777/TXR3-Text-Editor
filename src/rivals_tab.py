@@ -1,14 +1,23 @@
-from PyQt6.QtWidgets import QWidget, QTreeWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QTreeWidgetItem, QTabWidget
+from PyQt6.QtWidgets import QWidget, QTreeWidget, QVBoxLayout, QScrollArea, QHBoxLayout, QTreeWidgetItem, QTabWidget, \
+    QComboBox
 from PyQt6.QtWidgets import QLineEdit, QLabel, QPushButton
 
 import file_reader
 
 
 class RivalsTab(QWidget):
-    def __init__(self, dat26899: file_reader.Dat26899, dat26900: file_reader.Dat26900):
+    def __init__(self,
+                 bin26680: file_reader.Bin26680,  # Tokyo
+                 bin26681: file_reader.Bin26681,  # Osaka
+                 bin26682: file_reader.Bin26682,  # Nagoya
+                 dat26899: file_reader.Dat26899,
+                 dat26900: file_reader.Dat26900):
         super().__init__()
         self.rival_idx = 0
         self.region_idx = 0
+        self.bin26680 = bin26680
+        self.bin26681 = bin26681
+        self.bin26682 = bin26682
         self.dat26899 = dat26899
         self.dat26900 = dat26900
         self.rivals_tree_view = QTreeWidget()
@@ -69,7 +78,7 @@ class RivalsTab(QWidget):
         right_vbox.addWidget(rival_tabs)
 
         rival_id_text = QLineEdit()
-        rival_team_text = QLineEdit()
+        rival_team_combo = QComboBox()
         rival_nickname_1_text_edit = QLineEdit()
         rival_nickname_2_text_edit = QLineEdit()
         rival_name_text_edit = QLineEdit()
@@ -87,14 +96,14 @@ class RivalsTab(QWidget):
         rival_profile3_line4 = QLineEdit()
         rival_profile3_line5 = QLineEdit()
 
-        self.rival_lines = [rival_id_text, rival_team_text, rival_nickname_1_text_edit, rival_nickname_2_text_edit,
+        self.rival_lines = [rival_id_text, rival_team_combo, rival_nickname_1_text_edit, rival_nickname_2_text_edit,
                             rival_name_text_edit, rival_job_text_edit, rival_career_text_edit, rival_motto_text_edit,
                             rival_profile2_line1, rival_profile2_line2, rival_profile2_line3, rival_profile2_line4,
                             rival_profile2_line5, rival_profile3_line1, rival_profile3_line2, rival_profile3_line3,
                             rival_profile3_line4, rival_profile3_line5]
 
         self.rival_lines[0].setEnabled(False)
-        self.rival_lines[1].setEnabled(False)
+        self.rival_lines[1].setEnabled(True)
         self.rival_lines[2].setMaxLength(0x12 - 1)
         self.rival_lines[3].setMaxLength(0x10 - 1)
         self.rival_lines[4].setMaxLength(0x23 - 1)
@@ -102,6 +111,9 @@ class RivalsTab(QWidget):
         self.rival_lines[6].setMaxLength(0x0b - 1)
         for line in self.rival_lines[7:]:
             line.setMaxLength(0x51 - 1)
+
+        for team in self.teams:
+            rival_team_combo.addItem(team['team_name'].decode('utf-8', errors='ignore').strip('\x00'))
 
         rival_tabs.addTab(self.profile1(), "Profile 1")
         rival_tabs.addTab(self.profile2(), "Profile 2")
@@ -197,7 +209,7 @@ class RivalsTab(QWidget):
         team = self.teams[rival['team_id']]
 
         self.rival_lines[0].setText(str(rival['rival_id'] + 1))
-        self.rival_lines[1].setText(team['team_name'].decode('utf-8', errors='ignore').strip('\x00'))
+        self.rival_lines[1].setCurrentText(team['team_name'].decode('utf-8', errors='ignore').strip('\x00'))
         self.rival_lines[2].setText(rival['nickname_1'].decode('utf-8', errors='ignore').strip('\x00'))
         self.rival_lines[3].setText(rival['nickname_2'].decode('utf-8', errors='ignore').strip('\x00'))
         self.rival_lines[4].setText(profile['name'].decode('utf-8', errors='ignore').strip('\x00'))
@@ -228,6 +240,7 @@ class RivalsTab(QWidget):
             rival = self.nagoya_rivals_struct[self.rival_idx]
             profile = self.nagoya_rivals_profiles[self.rival_idx]
 
+        rival['team_id'] = self.rival_lines[1].currentIndex()
         rival['nickname_1'] = self.rival_lines[2].text().encode('utf-8') + b'\x00'
         rival['nickname_2'] = self.rival_lines[3].text().encode('utf-8') + b'\x00'
         profile['name'] = self.rival_lines[4].text().encode('utf-8') + b'\x00'
@@ -246,15 +259,17 @@ class RivalsTab(QWidget):
         profile['p3_line5'] = self.rival_lines[17].text().encode('utf-8') + b'\x00'
 
         if self.region_idx == 0:
+            self.bin26680.save_tokyo_rivals(self.tokyo_rivals_struct)
             self.dat26899.save_rivals(self.region_idx, self.tokyo_rivals_struct)
             self.dat26900.save_rivals(self.region_idx, self.tokyo_rivals_profiles)
         elif self.region_idx == 1:
+            self.bin26681.save_osaka_rivals(self.osaka_rivals_struct)
             self.dat26899.save_rivals(self.region_idx, self.osaka_rivals_struct)
             self.dat26900.save_rivals(self.region_idx, self.osaka_rivals_profiles)
         elif self.region_idx == 2:
+            self.bin26682.save_nagoya_rivals(self.nagoya_rivals_struct)
             self.dat26899.save_rivals(self.region_idx, self.nagoya_rivals_struct)
             self.dat26900.save_rivals(self.region_idx, self.nagoya_rivals_profiles)
 
-        self.rivals_tree_view.topLevelItem(self.region_idx).child(self.rival_idx)\
+        self.rivals_tree_view.topLevelItem(self.region_idx).child(self.rival_idx) \
             .setText(0, self.rival_lines[2].text() + self.rival_lines[3].text())
-

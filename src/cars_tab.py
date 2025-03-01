@@ -5,10 +5,13 @@ import file_reader
 
 
 class CarsTab(QWidget):
-    def __init__(self, dat26899: file_reader.Dat26899):
+    def __init__(self,
+                 bin26679: file_reader.Bin26679,
+                 dat26899: file_reader.Dat26899):
         super().__init__()
         self.car_idx = 0
         self.description_idx = 0
+        self.bin26679 = bin26679
         self.dat26899 = dat26899
         self.cars_tree_view = QTreeWidget()
         self.layout = QHBoxLayout()
@@ -179,6 +182,7 @@ class CarsTab(QWidget):
         if self.car_idx != 59 and self.car_idx != 116 and self.car_idx != 80:
             self.car_descriptions[self.description_idx] = self.car_lines[9].toPlainText().encode('utf-8') + b'\x00'
 
+        self.bin26679.save_car_models(self.cars)
         self.dat26899.save_car_models(self.cars, self.car_descriptions)
 
         self.cars_tree_view.currentItem().setText(0, car['model'].decode('utf-8', errors='ignore').strip('\x00') +
