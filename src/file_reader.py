@@ -20,12 +20,134 @@ def rival_struct(file):
     rival_data = {
         'team_id': file.read_uint16(),
         'rival_id': file.read_uint16(),
-        'unk1': file.read_uint16(),
+        'course_id': file.read_uint8(),
+        'car_id': file.read_uint8(),
         'nickname_1': file.read(0x12),
         'nickname_2': file.read(0x10),
-        'data': file.read(0xac)
+        'data': file.read(0x74),
+        'engine': file.read_uint8(),
+        'muffler': file.read_uint8(),
+        'cooling': file.read_uint8(),
+        'engine_swap': file.read_uint8(),
+        'transmission': file.read_uint8(),
+        'clutch': file.read_uint8(),
+        'suspension': file.read_uint8(),
+        'brake': file.read_uint8(),
+        'reinforce': file.read_uint8(),
+        'weight_down': file.read_uint8(),
+        'front_bumper': file.read_uint8(),
+        'bonnet': file.read_uint8(),
+        'grill': file.read_uint8(),
+        'mirror': file.read_uint8(),
+        'overfender': file.read_uint8(),
+        'sideskirt': file.read_uint8(),
+        'rear_bumper': file.read_uint8(),
+        'rear_spoiler': file.read_uint8(),
+        'front_bumper_material': file.read_uint8(),
+        'bonnet_material': file.read_uint8(),
+        'grill_material': file.read_uint8(),
+        'mirror_material': file.read_uint8(),
+        'overfender_material': file.read_uint8(),
+        'sideskirt_material': file.read_uint8(),
+        'rear_bumper_material': file.read_uint8(),
+        'rear_spoiler_material': file.read_uint8(),
+        'front_tire': file.read_uint8(),
+        'front_wheel_size': file.read_uint8(),
+        'front_wheel': file.read_uint8(),
+        'rear_tire': file.read_uint8(),
+        'rear_wheel_size': file.read_uint8(),
+        'rear_wheel': file.read_uint8(),
+        'front_light_design': file.read_uint8(),
+        'front_light_eyeline': file.read_uint8(),
+        'front_light_color': file.read_uint8(),
+        'tail_light_eyeline': file.read_uint8(),
+        'tail_light_color': file.read_uint8(),
+        'winker': file.read_uint8(),
+        'horn': file.read_uint8(),
+        'numberplate': file.read_uint8(),
+        'meter': file.read_uint8(),
+        'front_light_eyeline_material': file.read_uint8(),
+        'tail_light_eyeline_material': file.read_uint8(),
+        'body_color_1_r': file.read_uint8(),
+        'body_color_1_g': file.read_uint8(),
+        'body_color_1_b': file.read_uint8(),
+        'body_color_2_r': file.read_uint8(),
+        'body_color_2_g': file.read_uint8(),
+        'body_color_2_b': file.read_uint8(),
+        'window_color_r': file.read_uint8(),
+        'window_color_g': file.read_uint8(),
+        'window_color_b': file.read_uint8(),
+        'window_color_alpha': file.read_uint8(),
+        'dummy': file.read_uint8(),
+        'body_reflection': file.read_uint16()
     }
     return rival_data
+
+
+def save_rival_struct(file, rivals):
+    for rival in rivals:
+        file.write_uint16(rival['team_id'])
+        file.seek(0x2, os.SEEK_CUR)
+        file.write_uint8(rival['course_id'])
+        file.write_uint8(rival['car_id'])
+        file.write_n_bytes(rival['nickname_1'], 0x12)
+        file.write_n_bytes(rival['nickname_2'], 0x10)
+        file.seek(0x74, os.SEEK_CUR)
+        file.write_uint8(rival['engine'])
+        file.write_uint8(rival['muffler'])
+        file.write_uint8(rival['cooling'])
+        file.write_uint8(rival['engine_swap'])
+        file.write_uint8(rival['transmission'])
+        file.write_uint8(rival['clutch'])
+        file.write_uint8(rival['suspension'])
+        file.write_uint8(rival['brake'])
+        file.write_uint8(rival['reinforce'])
+        file.write_uint8(rival['weight_down'])
+        file.write_uint8(rival['front_bumper'])
+        file.write_uint8(rival['bonnet'])
+        file.write_uint8(rival['grill'])
+        file.write_uint8(rival['mirror'])
+        file.write_uint8(rival['overfender'])
+        file.write_uint8(rival['sideskirt'])
+        file.write_uint8(rival['rear_bumper'])
+        file.write_uint8(rival['rear_spoiler'])
+        file.write_uint8(rival['front_bumper_material'])
+        file.write_uint8(rival['bonnet_material'])
+        file.write_uint8(rival['grill_material'])
+        file.write_uint8(rival['mirror_material'])
+        file.write_uint8(rival['overfender_material'])
+        file.write_uint8(rival['sideskirt_material'])
+        file.write_uint8(rival['rear_bumper_material'])
+        file.write_uint8(rival['rear_spoiler_material'])
+        file.write_uint8(rival['front_tire'])
+        file.write_uint8(rival['front_wheel_size'])
+        file.write_uint8(rival['front_wheel'])
+        file.write_uint8(rival['rear_tire'])
+        file.write_uint8(rival['rear_wheel_size'])
+        file.write_uint8(rival['rear_wheel'])
+        file.write_uint8(rival['front_light_design'])
+        file.write_uint8(rival['front_light_eyeline'])
+        file.write_uint8(rival['front_light_color'])
+        file.write_uint8(rival['tail_light_eyeline'])
+        file.write_uint8(rival['tail_light_color'])
+        file.write_uint8(rival['winker'])
+        file.write_uint8(rival['horn'])
+        file.write_uint8(rival['numberplate'])
+        file.write_uint8(rival['meter'])
+        file.write_uint8(rival['front_light_eyeline_material'])
+        file.write_uint8(rival['tail_light_eyeline_material'])
+        file.write_uint8(rival['body_color_1_r'])
+        file.write_uint8(rival['body_color_1_g'])
+        file.write_uint8(rival['body_color_1_b'])
+        file.write_uint8(rival['body_color_2_r'])
+        file.write_uint8(rival['body_color_2_g'])
+        file.write_uint8(rival['body_color_2_b'])
+        file.write_uint8(rival['window_color_r'])
+        file.write_uint8(rival['window_color_g'])
+        file.write_uint8(rival['window_color_b'])
+        file.write_uint8(rival['window_color_alpha'])
+        file.seek(0x1, os.SEEK_CUR)
+        file.write_uint16(rival['body_reflection'])
 
 
 def rival_text_struct(file):
@@ -124,8 +246,14 @@ class FileReader:
         data = data.ljust(n, b'\x00')
         self.file.write(struct.pack('<' + 'B' * n, *data))
 
+    def write_uint8(self, data):
+        self.file.write(struct.pack('<B', data))
+
     def write_uint16(self, data):
         self.file.write(struct.pack('<H', data))
+
+    def write_uint32(self, data):
+        self.file.write(struct.pack('<I', data))
 
     def read_int8(self):
         return struct.unpack('<b', self.file.read(1))[0]
@@ -308,12 +436,7 @@ class Dat26899:
         elif region == 2:
             self.file.seek(self.dat.entries[13])
 
-        for rival in rivals:
-            self.file.write_uint16(rival['team_id'])
-            self.file.seek(0x2 * 2, os.SEEK_CUR)
-            self.file.write_n_bytes(rival['nickname_1'], 0x12)
-            self.file.write_n_bytes(rival['nickname_2'], 0x10)
-            self.file.seek(0xac, os.SEEK_CUR)
+        save_rival_struct(self.file, rivals)
 
     def save_car_models(self, car_models, car_descriptions):
         self.file.seek(self.dat.entries[11])
@@ -469,12 +592,7 @@ class Bin26680:
 
     def save_tokyo_rivals(self, rivals: rival_struct):
         self.file.seek(0)
-        for rival in rivals:
-            self.file.write_uint16(rival['team_id'])
-            self.file.seek(0x2 * 2, os.SEEK_CUR)
-            self.file.write_n_bytes(rival['nickname_1'], 0x12)
-            self.file.write_n_bytes(rival['nickname_2'], 0x10)
-            self.file.seek(0xac, os.SEEK_CUR)
+        save_rival_struct(self.file, rivals)
 
 
 # class for reading data from 26681.bin (osaka rivals, duplicate of 269899/0014)
@@ -492,12 +610,7 @@ class Bin26681:
 
     def save_osaka_rivals(self, rivals: rival_struct):
         self.file.seek(0)
-        for rival in rivals:
-            self.file.write_uint16(rival['team_id'])
-            self.file.seek(0x2 * 2, os.SEEK_CUR)
-            self.file.write_n_bytes(rival['nickname_1'], 0x12)
-            self.file.write_n_bytes(rival['nickname_2'], 0x10)
-            self.file.seek(0xac, os.SEEK_CUR)
+        save_rival_struct(self.file, rivals)
 
 
 # class for reading data from 26682.bin (nagoya rivals, duplicate of 269899/0013)
@@ -515,9 +628,4 @@ class Bin26682:
 
     def save_nagoya_rivals(self, rivals: rival_struct):
         self.file.seek(0)
-        for rival in rivals:
-            self.file.write_uint16(rival['team_id'])
-            self.file.seek(0x2 * 2, os.SEEK_CUR)
-            self.file.write_n_bytes(rival['nickname_1'], 0x12)
-            self.file.write_n_bytes(rival['nickname_2'], 0x10)
-            self.file.seek(0xac, os.SEEK_CUR)
+        save_rival_struct(self.file, rivals)

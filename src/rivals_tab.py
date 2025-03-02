@@ -3,6 +3,31 @@ from PyQt6.QtWidgets import QWidget, QTreeWidget, QVBoxLayout, QScrollArea, QHBo
 from PyQt6.QtWidgets import QLineEdit, QLabel, QPushButton
 
 import file_reader
+from rival_data_widget import RivalDataWidget
+
+course_enum = {
+    0x00: "Tokyo C1 Inner Loop",
+    0x01: "Tokyo C1 Outer Loop",
+    0x02: "Tokyo ShinKanjou CCL",
+    0x03: "Tokyo ShinKanjou CWL",
+    0x04: "Tokyo Wangan In",
+    0x05: "Tokyo Wangan Out",
+    0x06: "Tokyo Yokohane In",
+    0x07: "Tokyo Yokohane Out",
+    0x08: "Tokyo Yokohama CCL",
+    0x09: "Tokyo Yokohama CWL",
+    0x0A: "Daikoku In",
+    0x0B: "Osaka Kanjou Upper",
+    0x0C: "Osaka Kanjou Middle",
+    0x0D: "Osaka Kanjou Lower",
+    0x0E: "Osaka Wangan In",
+    0x0F: "Osaka Wangan Out",
+    0x10: "Osaka Sakai In",
+    0x11: "Osaka Sakai Out",
+    0x12: "Nagoya Kanjou",
+    0x13: "Nagoya E Higashimeihan",
+    0x14: "Nagoya W Higashimeihan",
+}
 
 
 class RivalsTab(QWidget):
@@ -21,6 +46,7 @@ class RivalsTab(QWidget):
         self.dat26899 = dat26899
         self.dat26900 = dat26900
         self.rivals_tree_view = QTreeWidget()
+        self.rival_data_tab = RivalDataWidget(dat26899)
 
         self.teams = dat26900.get_team_profiles()
         self.tokyo_rivals_struct = dat26899.get_tokyo_rivals()
@@ -29,6 +55,8 @@ class RivalsTab(QWidget):
         self.tokyo_rivals_profiles = dat26900.get_tokyo_rivals()
         self.osaka_rivals_profiles = dat26900.get_osaka_rivals()
         self.nagoya_rivals_profiles = dat26900.get_nagoya_rivals()
+
+        self.rival_course_combo = QComboBox()
 
         self.rival_lines = []
 
@@ -115,9 +143,17 @@ class RivalsTab(QWidget):
         for team in self.teams:
             rival_team_combo.addItem(team['team_name'].decode('utf-8', errors='ignore').strip('\x00'))
 
+        for course in course_enum.values():
+            self.rival_course_combo.addItem(course)
+
         rival_tabs.addTab(self.profile1(), "Profile 1")
         rival_tabs.addTab(self.profile2(), "Profile 2")
         rival_tabs.addTab(self.profile3(), "Profile 3")
+
+        rival_data_scroll_area = QScrollArea()
+        rival_data_scroll_area.setWidget(self.rival_data_tab)
+        rival_data_scroll_area.setWidgetResizable(True)
+        rival_tabs.addTab(rival_data_scroll_area, "Rival Data")
 
         button_hbox = QHBoxLayout()
         save_button = QPushButton("Save")
@@ -134,6 +170,10 @@ class RivalsTab(QWidget):
         hbox = QHBoxLayout()
         hbox.addWidget(QLabel("Rival ID:"))
         hbox.addWidget(self.rival_lines[0])
+        layout.addLayout(hbox)
+        hbox = QHBoxLayout()
+        hbox.addWidget(QLabel("Course:"))
+        hbox.addWidget(self.rival_course_combo)
         hbox.addWidget(QLabel("Team:"))
         hbox.addWidget(self.rival_lines[1])
         layout.addLayout(hbox)
@@ -206,6 +246,7 @@ class RivalsTab(QWidget):
             rival = self.nagoya_rivals_struct[self.rival_idx]
             profile = self.nagoya_rivals_profiles[self.rival_idx]
 
+        self.rival_course_combo.setCurrentText(course_enum[rival['course_id']])
         team = self.teams[rival['team_id']]
 
         self.rival_lines[0].setText(str(rival['rival_id'] + 1))
@@ -227,6 +268,8 @@ class RivalsTab(QWidget):
         self.rival_lines[16].setText(profile['p3_line4'].decode('utf-8', errors='ignore').strip('\x00'))
         self.rival_lines[17].setText(profile['p3_line5'].decode('utf-8', errors='ignore').strip('\x00'))
 
+        self.rival_data_tab.reset(rival)
+
     def save(self):
         rival = None
         profile = None
@@ -240,6 +283,7 @@ class RivalsTab(QWidget):
             rival = self.nagoya_rivals_struct[self.rival_idx]
             profile = self.nagoya_rivals_profiles[self.rival_idx]
 
+        rival['course_id'] = self.rival_course_combo.currentIndex()
         rival['team_id'] = self.rival_lines[1].currentIndex()
         rival['nickname_1'] = self.rival_lines[2].text().encode('utf-8') + b'\x00'
         rival['nickname_2'] = self.rival_lines[3].text().encode('utf-8') + b'\x00'
@@ -257,6 +301,8 @@ class RivalsTab(QWidget):
         profile['p3_line3'] = self.rival_lines[15].text().encode('utf-8') + b'\x00'
         profile['p3_line4'] = self.rival_lines[16].text().encode('utf-8') + b'\x00'
         profile['p3_line5'] = self.rival_lines[17].text().encode('utf-8') + b'\x00'
+
+        self.rival_data_tab.save(rival)
 
         if self.region_idx == 0:
             self.bin26680.save_tokyo_rivals(self.tokyo_rivals_struct)
