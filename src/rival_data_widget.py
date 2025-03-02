@@ -15,12 +15,7 @@ class RivalDataWidget(QWidget):
         self.dat26899 = dat26899
 
         self.car_models = dat26899.get_car_models()
-        self.car_models_enum = {}
-        for i, model in enumerate(self.car_models):
-            self.car_models_enum[i] = model['brand'].decode('utf-8', errors='ignore').strip('\x00') + ' ' + \
-                                      model['model'].decode('utf-8', errors='ignore').strip('\x00') + ' ' + \
-                                      model['chassis'].decode('utf-8', errors='ignore').strip('\x00') + ' ' + \
-                                      model['spec'].decode('utf-8', errors='ignore').strip('\x00')
+        self.car_models_enum = self.get_ordered_car_models()
 
         self.data_fields = [
             'car_id',
@@ -220,6 +215,36 @@ class RivalDataWidget(QWidget):
 
         self.populate_comboboxes()
 
+    def get_ordered_car_models(self):
+        ordered_car_models = {}
+        for i, model in enumerate(self.car_models):
+            idx = i
+            if 48 <= i <= 59:  # Vitz misalignment fix
+                idx += 1
+            if i == 79:
+                idx = 48
+
+            if i == 80:  # Dummy car misalignment fix
+                idx = 79
+            if i > 80:
+                idx -= 2
+
+            if i == 116:  # 0 car misalignment fix
+                idx = i
+            if i > 116:
+                idx -= 1
+
+            ordered_car_models[idx] = (str(idx) + ' | ' +
+                                       model['brand'].decode('utf-8', errors='ignore').strip('\x00') + ' ' +
+                                       model['model'].decode('utf-8', errors='ignore').strip('\x00') + ' ' +
+                                       model['chassis'].decode('utf-8', errors='ignore').strip('\x00') + ' ' +
+                                       model['spec'].decode('utf-8', errors='ignore').strip('\x00'))
+
+        ordered_car_models[117] = '117 | Truck SWB'
+        ordered_car_models[118] = '118 | Toyota Hiace Death'
+
+        return ordered_car_models
+
     def populate_comboboxes(self):
         for field, combobox in self.data_lines.items():
             if field in ['engine']:
@@ -260,7 +285,8 @@ class RivalDataWidget(QWidget):
                 for key, value in self.types_enum_licence_plate.items():
                     combobox.addItem(value, key)
             elif field == 'car_id':
-                for key, value in self.car_models_enum.items():
+                sorted_car_models = sorted(self.get_ordered_car_models().items(), key=lambda x: x[0])
+                for key, value in sorted_car_models:
                     combobox.addItem(value, key)
             else:
                 for i in range(256):
