@@ -32,6 +32,14 @@ class RivalDataWidget(QWidget):
             'rear_wheel_size', 'rear_wheel', 'front_tire', 'rear_tire'
         ]
 
+        self.misc_fields = [
+            'bgm_id',
+            'rival_icon',
+            'sticker_pos_type',
+            'license_plate_field0', 'license_plate_field1', 'license_plate_field2', 'license_plate_field3'
+        ]
+        self.misc_lines = {field: QComboBox() for field in self.misc_fields}
+
         self.body_color_1_fields = ['body_color_1_r', 'body_color_1_g', 'body_color_1_b']
         self.body_color_2_fields = ['body_color_2_r', 'body_color_2_g', 'body_color_2_b']
         self.window_color_fields = ['window_color_r', 'window_color_g', 'window_color_b', 'window_color_alpha']
@@ -211,6 +219,14 @@ class RivalDataWidget(QWidget):
         layout.addWidget(QLabel("Body Reflection:"))
         layout.addWidget(self.body_reflection_slider)
 
+        misc_layout = QVBoxLayout()
+        for field in self.misc_fields:
+            hbox = QHBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.misc_lines[field])
+            misc_layout.addLayout(hbox)
+        layout.addLayout(misc_layout)
+
         self.setLayout(layout)
 
         self.populate_comboboxes()
@@ -292,6 +308,10 @@ class RivalDataWidget(QWidget):
                 for i in range(256):
                     combobox.addItem(str(i), i)
 
+        for field, combobox in self.misc_lines.items():
+            for i in range(256):
+                combobox.addItem(str(i), i)
+
     def open_color_dialog(self, color_field):
         color = QColorDialog.getColor()
         if color.isValid():
@@ -322,6 +342,9 @@ class RivalDataWidget(QWidget):
 
         self.body_reflection_slider.setValue(rival['body_reflection'])
 
+        for field in self.misc_fields:
+            self.misc_lines[field].setCurrentIndex(rival[field])
+
     def save(self, rival):
         for field in self.data_fields:
             rival[field] = self.data_lines[field].currentData()
@@ -336,3 +359,6 @@ class RivalDataWidget(QWidget):
         rival['window_color_b'] = self.window_color.blue()
         rival['window_color_alpha'] = self.window_color.alpha()
         rival['body_reflection'] = self.body_reflection_slider.value()
+
+        for field in self.misc_fields:
+            rival[field] = self.misc_lines[field].currentData()
