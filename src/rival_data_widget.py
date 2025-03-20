@@ -1,6 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QPixmap
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QPushButton, QColorDialog, QLabel, QSlider
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QPushButton, QColorDialog, QLabel, QSlider, \
+    QLineEdit
 
 import file_reader
 
@@ -13,36 +14,6 @@ class RivalDataWidget(QWidget):
         self.body_color_2 = QColor(0, 0, 0, 0)
         self.body_color_1 = QColor(0, 0, 0, 0)
         self.dat26899 = dat26899
-
-        self.car_models = dat26899.get_car_models()
-        self.car_models_enum = self.get_ordered_car_models()
-
-        self.data_fields = [
-            'car_id',
-            'engine', 'engine_swap', 'muffler', 'cooling', 'transmission', 'clutch',
-            'suspension', 'brake', 'reinforce', 'weight_down',
-            'front_bumper', 'front_bumper_material', 'bonnet', 'bonnet_material', 'grill', 'grill_material',
-            'overfender', 'overfender_material', 'sideskirt', 'sideskirt_material',
-            'rear_bumper', 'rear_bumper_material', 'rear_spoiler', 'rear_spoiler_material', 'mirror', 'mirror_material',
-            'front_light_design',
-            'front_light_eyeline', 'front_light_eyeline_material', 'front_light_color',
-            'tail_light_eyeline', 'tail_light_eyeline_material', 'tail_light_color',
-            'winker', 'horn', 'numberplate', 'meter',
-            'front_wheel_size', 'front_wheel',
-            'rear_wheel_size', 'rear_wheel', 'front_tire', 'rear_tire'
-        ]
-
-        self.misc_fields = [
-            'bgm_id',
-            'rival_icon',
-            'sticker_pos_type',
-            'license_plate_field0', 'license_plate_field1', 'license_plate_field2', 'license_plate_field3'
-        ]
-        self.misc_lines = {field: QComboBox() for field in self.misc_fields}
-
-        self.body_color_1_fields = ['body_color_1_r', 'body_color_1_g', 'body_color_1_b']
-        self.body_color_2_fields = ['body_color_2_r', 'body_color_2_g', 'body_color_2_b']
-        self.window_color_fields = ['window_color_r', 'window_color_g', 'window_color_b', 'window_color_alpha']
 
         self.engine_swaps_enum = {
             0x00: 'None',
@@ -180,6 +151,68 @@ class RivalDataWidget(QWidget):
             0x05: 'Type 5'
         }
 
+        self.rival_type_enum = {
+            0x00: 'Normal Stage 1',
+            0x01: 'Leader Stage 1',
+            0x02: 'Wanderer Stage 1',
+            0x03: 'Zone Boss Stage 1',
+            0x04: 'Area Boss Stage 1',
+            0x05: 'Normal Stage 2',
+            0x06: 'Leader Stage 2',
+            0x07: 'Wanderer Stage 2',
+            0x08: 'Zone Boss Stage 2',
+            0x09: 'Area Boss Stage 2',
+            0x0A: 'Last Boss'
+        }
+
+        self.unk01_enum = {
+            0x0300: 'Yes',
+            0xFFFF: 'No'
+        }
+
+        self.car_models = dat26899.get_car_models()
+        self.car_models_enum = self.get_ordered_car_models()
+
+        self.rival_fields = ['car_id', 'rival_type', 'sticker_id', 'sticker_pos_type']
+        self.power_fields = ['engine', 'muffler', 'cooling', 'engine_swap']
+        self.powertrain_fields = ['transmission', 'clutch', 'suspension', 'brake']
+        self.wheel_fields = ['front_wheel', 'front_wheel_size', 'front_tire',
+                             'rear_wheel', 'rear_wheel_size', 'rear_tire']
+        self.body_fields = ['reinforce', 'weight_down']
+
+        self.aero_fields = ['front_bumper', 'front_bumper_material',
+                            'bonnet', 'bonnet_material',
+                            'grill', 'grill_material',
+                            'overfender', 'overfender_material',
+                            'sideskirt', 'sideskirt_material',
+                            'rear_bumper', 'rear_bumper_material',
+                            'rear_spoiler', 'rear_spoiler_material',
+                            'mirror', 'mirror_material']
+        self.dressup_fields = ['front_light_design', 'front_light_eyeline', 'front_light_eyeline_material',
+                               'front_light_color', 'tail_light_eyeline', 'tail_light_eyeline_material',
+                               'tail_light_color',
+                               'winker', 'horn', 'numberplate', 'meter']
+
+        self.experimental_fields = [
+            'unk00', 'unk01', 'unk02', 'unk03', 'unk04', 'unk05', 'unk06', 'unk07',
+            'unk08', 'unk09',
+            'flag00', 'flag01', 'flag02', 'flag03', 'flag04', 'flag05',
+            'unk_char00', 'unk_char01',
+            'other_rival_flag00', 'other_rival_flag01',
+            'other_rival_id0', 'other_rival_id1',
+            'unk_val00', 'unk_val01'
+        ]
+
+        self.experimental_lines = {field: QLineEdit() for field in self.experimental_fields}
+        for field in self.experimental_fields:
+            self.experimental_lines[field].setInputMask("HHHH")
+
+        self.body_color_1_fields = ['body_color_1_r', 'body_color_1_g', 'body_color_1_b']
+        self.body_color_2_fields = ['body_color_2_r', 'body_color_2_g', 'body_color_2_b']
+        self.window_color_fields = ['window_color_r', 'window_color_g', 'window_color_b', 'window_color_alpha']
+
+        self.data_fields = self.rival_fields + self.power_fields + self.powertrain_fields + self.wheel_fields + \
+                           self.body_fields + self.aero_fields + self.dressup_fields
         self.data_lines = {field: QComboBox() for field in self.data_fields}
         self.color_buttons = {
             'body_color_1': QPushButton("Select Body Color 1"),
@@ -193,16 +226,74 @@ class RivalDataWidget(QWidget):
         }
 
         layout = QVBoxLayout()
-        row_layout = QHBoxLayout()
-        for i, field in enumerate(self.data_fields):
-            if i > 0 and i % 3 == 0:
-                layout.addLayout(row_layout)
-                row_layout = QHBoxLayout()
+        # Rival Layout
+        rival_layout = QHBoxLayout()
+        for field in self.rival_fields:
             hbox = QVBoxLayout()
             hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
             hbox.addWidget(self.data_lines[field])
-            row_layout.addLayout(hbox)
-        layout.addLayout(row_layout)
+            rival_layout.addLayout(hbox)
+        layout.addLayout(rival_layout)
+
+        # Engine Layout
+        engine_layout = QHBoxLayout()
+        for field in self.power_fields:
+            hbox = QVBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.data_lines[field])
+            engine_layout.addLayout(hbox)
+        layout.addLayout(engine_layout)
+
+        # Powertrain Layout
+        powertrain_layout = QHBoxLayout()
+        for field in self.powertrain_fields:
+            hbox = QVBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.data_lines[field])
+            powertrain_layout.addLayout(hbox)
+        layout.addLayout(powertrain_layout)
+
+        # Wheel Layout
+        wheel_layout = QHBoxLayout()
+        for field in self.wheel_fields:
+            hbox = QVBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.data_lines[field])
+            wheel_layout.addLayout(hbox)
+        layout.addLayout(wheel_layout)
+
+        # Body Layout
+        body_layout = QHBoxLayout()
+        for field in self.body_fields:
+            hbox = QVBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.data_lines[field])
+            body_layout.addLayout(hbox)
+        layout.addLayout(body_layout)
+
+        # Aero Layout
+        aero_layout = QHBoxLayout()
+        for i, field in enumerate(self.aero_fields):
+            if i > 0 and i % 2 == 0:
+                layout.addLayout(aero_layout)
+                aero_layout = QHBoxLayout()
+            hbox = QVBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.data_lines[field])
+            aero_layout.addLayout(hbox)
+        layout.addLayout(aero_layout)
+
+        # Dressup Layout
+        dressup_layout = QHBoxLayout()
+        for i, field in enumerate(self.dressup_fields):
+            if i > 0 and i % 3 == 0:
+                layout.addLayout(dressup_layout)
+                dressup_layout = QHBoxLayout()
+            hbox = QVBoxLayout()
+            hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
+            hbox.addWidget(self.data_lines[field])
+            dressup_layout.addLayout(hbox)
+        layout.addLayout(dressup_layout)
 
         for color_field, button in self.color_buttons.items():
             color_layout = QHBoxLayout()
@@ -219,13 +310,19 @@ class RivalDataWidget(QWidget):
         layout.addWidget(QLabel("Body Reflection:"))
         layout.addWidget(self.body_reflection_slider)
 
-        misc_layout = QVBoxLayout()
-        for field in self.misc_fields:
-            hbox = QHBoxLayout()
+        # Experimental Layout
+        exp_label = QLabel("Unknown values (in 16bit hex):")
+        layout.addWidget(exp_label)
+        experimental_layout = QHBoxLayout()
+        for i, field in enumerate(self.experimental_fields):
+            if i > 0 and i % 8 == 0:
+                layout.addLayout(experimental_layout)
+                experimental_layout = QHBoxLayout()
+            hbox = QVBoxLayout()
             hbox.addWidget(QLabel(field.replace('_', ' ').title() + ":"))
-            hbox.addWidget(self.misc_lines[field])
-            misc_layout.addLayout(hbox)
-        layout.addLayout(misc_layout)
+            hbox.addWidget(self.experimental_lines[field])
+            experimental_layout.addLayout(hbox)
+        layout.addLayout(experimental_layout)
 
         self.setLayout(layout)
 
@@ -304,13 +401,16 @@ class RivalDataWidget(QWidget):
                 sorted_car_models = sorted(self.get_ordered_car_models().items(), key=lambda x: x[0])
                 for key, value in sorted_car_models:
                     combobox.addItem(value, key)
+            elif field == 'rival_type':
+                for key, value in self.rival_type_enum.items():
+                    combobox.addItem(value, key)
+            elif field in ['other_rival_id0', 'other_rival_id1']:
+                for i in range(311):
+                    combobox.addItem(str(i), i)
+                combobox.addItem('None', 0xFFFF)
             else:
                 for i in range(256):
                     combobox.addItem(str(i), i)
-
-        for field, combobox in self.misc_lines.items():
-            for i in range(256):
-                combobox.addItem(str(i), i)
 
     def open_color_dialog(self, color_field):
         color = QColorDialog.getColor()
@@ -332,6 +432,8 @@ class RivalDataWidget(QWidget):
     def reset(self, rival):
         for field in self.data_fields:
             self.data_lines[field].setCurrentIndex(rival[field])
+        for field in self.experimental_fields:
+            self.experimental_lines[field].setText(f"{rival[field]:04X}")
         self.body_color_1 = QColor(rival['body_color_1_r'], rival['body_color_1_g'], rival['body_color_1_b'])
         self.body_color_2 = QColor(rival['body_color_2_r'], rival['body_color_2_g'], rival['body_color_2_b'])
         self.window_color = QColor(rival['window_color_r'], rival['window_color_g'], rival['window_color_b'],
@@ -342,12 +444,11 @@ class RivalDataWidget(QWidget):
 
         self.body_reflection_slider.setValue(rival['body_reflection'])
 
-        for field in self.misc_fields:
-            self.misc_lines[field].setCurrentIndex(rival[field])
-
     def save(self, rival):
         for field in self.data_fields:
             rival[field] = self.data_lines[field].currentData()
+        for field in self.experimental_fields:
+            rival[field] = int(self.experimental_lines[field].text().strip(), 16)
         rival['body_color_1_r'] = self.body_color_1.red()
         rival['body_color_1_g'] = self.body_color_1.green()
         rival['body_color_1_b'] = self.body_color_1.blue()
@@ -359,6 +460,3 @@ class RivalDataWidget(QWidget):
         rival['window_color_b'] = self.window_color.blue()
         rival['window_color_alpha'] = self.window_color.alpha()
         rival['body_reflection'] = self.body_reflection_slider.value()
-
-        for field in self.misc_fields:
-            rival[field] = self.misc_lines[field].currentData()

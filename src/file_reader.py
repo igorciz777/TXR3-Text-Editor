@@ -24,45 +24,45 @@ def rival_struct(file):
         'car_id': file.read_uint8(),
         'nickname_1': file.read(0x12),
         'nickname_2': file.read(0x12),
-        'diff01': file.read_uint16(),
-        'bgm_id': file.read_uint16(),
-        'unk01': file.read_uint32(),
-        'ff00': file.read_uint32(),
-        'ff01': file.read_uint16(),
-        'unk02': file.read_uint16(),
-        'ff02': file.read_uint32(),
-        'ff03': file.read_uint32(),
+        'unk00': file.read_uint16(),
+        'rival_type': file.read_uint8(),
+        'empty00': file.read(0xb),
+        'unk01': file.read_uint16(),
+        'empty01': file.read(0xb),
+        'flag00': file.read_uint8(),
+        'empty02': file.read(0x8),
+        'flag01': file.read_uint8(),
+        'unk02': file.read_uint8(),
+        'unk_char00': file.read_uint8(),
+        'empty03': file.read(0x1),
         'unk03': file.read_uint16(),
-        'unk04': file.read_uint32(),
-        'unk05': file.read_uint32(),
-        'unk06': file.read_uint16(),
-        'diff02': file.read_uint16(),
-        'unk07': file.read_uint16(),
-        'diff03': file.read_uint16(),
-        'diff04': file.read_uint16(),
-        'ff04': file.read_uint16(),
-        'unk08': file.read_uint32(),
-        'unk09': file.read_uint32(),
-        'unk10': file.read_uint16(),
-        'unk11': file.read_uint32(),
-        'unk12': file.read_uint16(),
-        'unk13': file.read_uint16(),
-        'unk14': file.read_uint32(),
-        'unk15': file.read_uint32(),
-        'unk16': file.read_uint32(),
-        'unk17': file.read_uint32(),
-        'unk18': file.read_uint32(),
-        'unk19': file.read_uint16(),
-        'ff05': file.read_uint16(),
-        'unk20': file.read_uint16(),
-        'ff06': file.read_uint32(),
-        'ff07': file.read_uint32(),
-        'unk21': file.read_uint32(),
-        'unk22': file.read_uint16(),
-        'unk23': file.read_uint16(),
-        'unk24': file.read_uint16(),
+        'other_rival_id0': file.read_uint16(),
+        'empty04': file.read(0x2),
+        'other_rival_id1': file.read_uint16(),
+        'unk_char01': file.read_uint8(),
+        'flag02': file.read_uint8(),
+        'unk04': file.read_uint16(),
+        'other_rival_flag00': file.read_uint16(),
+        'unk_val00': file.read_uint16(),
+        'unk05': file.read_uint8(),
+        'empty05': file.read(0x9),
+        'unk06': file.read_uint8(),
+        'empty06': file.read(0x9),
+        'unk07': file.read_uint8(),
+        'empty07': file.read(0x1),
+        'flag03': file.read_uint8(),
+        'empty08': file.read(0x9),
+        'flag04': file.read_uint8(),
+        'empty09': file.read(0x9),
+        'flag05': file.read_uint8(),
+        'empty10': file.read(0x1),
+        'unk08': file.read_uint16(),
+        'unk09': file.read_uint8(),
+        'unk10': file.read_uint8(),
+        'other_rival_flag01': file.read_uint16(),
+        'unk_val01': file.read_uint16(),
         'sticker_pos_type': file.read_uint8(),
-        'rival_icon': file.read_uint8(),
+        'sticker_id': file.read_uint8(),
         'license_plate_field0': file.read_uint8(),
         'license_plate_field1': file.read_uint8(),
         'license_plate_field2': file.read_uint8(),
@@ -137,46 +137,45 @@ def save_rival_struct(file, rivals):
             file.write_uint8(rival['car_id'])
         file.write_n_bytes(rival['nickname_1'], 0x12)
         file.write_n_bytes(rival['nickname_2'], 0x12)
-        file.write_uint16(rival['diff01'])
-        file.write_uint8(rival['bgm_id'])
+        file.write_uint16(rival['unk00'])
+        file.write_uint8(rival['rival_type'])
+        file.seek(0xb, os.SEEK_CUR)
+        file.write_uint16(rival['unk01'])
+        file.seek(0xb, os.SEEK_CUR)
+        file.write_uint8(rival['flag00'])
+        file.seek(0x8, os.SEEK_CUR)
+        file.write_uint8(rival['flag01'])
+        file.write_uint8(rival['unk02'])
+        file.write_uint8(rival['unk_char00'])
         file.seek(0x1, os.SEEK_CUR)
-        file.write_uint32(rival['unk01'])
-        file.write_uint32(rival['ff00'])
-        file.write_uint16(rival['ff01'])
-        file.write_uint16(rival['unk02'])
-        file.write_uint32(rival['ff02'])
-        file.write_uint32(rival['ff03'])
         file.write_uint16(rival['unk03'])
-        file.write_uint32(rival['unk04'])
-        file.write_uint32(rival['unk05'])
-        file.write_uint16(rival['unk06'])
-        file.write_uint16(rival['diff02'])
-        file.write_uint16(rival['unk07'])
-        file.write_uint16(rival['diff03'])
-        file.write_uint16(rival['diff04'])
-        file.write_uint16(rival['ff04'])
-        file.write_uint32(rival['unk08'])
-        file.write_uint32(rival['unk09'])
-        file.write_uint16(rival['unk10'])
-        file.write_uint32(rival['unk11'])
-        file.write_uint16(rival['unk12'])
-        file.write_uint16(rival['unk13'])
-        file.write_uint32(rival['unk14'])
-        file.write_uint32(rival['unk15'])
-        file.write_uint32(rival['unk16'])
-        file.write_uint32(rival['unk17'])
-        file.write_uint32(rival['unk18'])
-        file.write_uint16(rival['unk19'])
-        file.write_uint16(rival['ff05'])
-        file.write_uint16(rival['unk20'])
-        file.write_uint32(rival['ff06'])
-        file.write_uint32(rival['ff07'])
-        file.write_uint32(rival['unk21'])
-        file.write_uint16(rival['unk22'])
-        file.write_uint16(rival['unk23'])
-        file.write_uint16(rival['unk24'])
+        file.write_uint16(rival['other_rival_id0'])
+        file.seek(0x2, os.SEEK_CUR)
+        file.write_uint16(rival['other_rival_id1'])
+        file.write_uint8(rival['unk_char01'])
+        file.write_uint8(rival['flag02'])
+        file.write_uint16(rival['unk04'])
+        file.write_uint16(rival['other_rival_flag00'])
+        file.write_uint16(rival['unk_val00'])
+        file.write_uint8(rival['unk05'])
+        file.seek(0x9, os.SEEK_CUR)
+        file.write_uint8(rival['unk06'])
+        file.seek(0x9, os.SEEK_CUR)
+        file.write_uint8(rival['unk07'])
+        file.seek(0x1, os.SEEK_CUR)
+        file.write_uint8(rival['flag03'])
+        file.seek(0x9, os.SEEK_CUR)
+        file.write_uint8(rival['flag04'])
+        file.seek(0x9, os.SEEK_CUR)
+        file.write_uint8(rival['flag05'])
+        file.seek(0x1, os.SEEK_CUR)
+        file.write_uint16(rival['unk08'])
+        file.write_uint8(rival['unk09'])
+        file.write_uint8(rival['unk10'])
+        file.write_uint16(rival['other_rival_flag01'])
+        file.write_uint16(rival['unk_val01'])
         file.write_uint8(rival['sticker_pos_type'])
-        file.write_uint8(rival['rival_icon'])
+        file.write_uint8(rival['sticker_id'])
         file.write_uint8(rival['license_plate_field0'])
         file.write_uint8(rival['license_plate_field1'])
         file.write_uint8(rival['license_plate_field2'])
@@ -335,9 +334,17 @@ class FileReader:
         self.file.write(struct.pack('<' + 'B' * n, *data))
 
     def write_uint8(self, data):
+        if data < 0:
+            data = 0
+        if data > 255:
+            data = 255
         self.file.write(struct.pack('<B', data))
 
     def write_uint16(self, data):
+        if data < 0:
+            data = 0
+        if data > 65535:
+            data = 65535
         self.file.write(struct.pack('<H', data))
 
     def write_uint32(self, data):
